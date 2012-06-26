@@ -1,0 +1,35 @@
+# Created by Octave 3.2.4, Tue Jun 12 11:41:49 2012 ART <paul@michael>
+# name: population
+# type: cell
+# rows: 1
+# columns: 5
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ 0.07744777067647941 0.06010930772420929 0.1795129945809369
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ -0.1926766586158258 -0.6331326331839302 -0.1495741666544378
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ 0.07744777067647941 0.06010930772420929 0.1795129945809369
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ 0.07744777067647941 -0.6331326331839302 -0.7696360163158049
+
+# name: <cell-element>
+# type: matrix
+# rows: 1
+# columns: 3
+ 0.07744777067647941 0.06010930772420929 0.1795129945809369
+

@@ -1,0 +1,21 @@
+# Created by Octave 3.2.4, Tue Apr 17 11:50:59 2012 ART <paul@michael>
+# name: w
+# type: cell
+# rows: 1
+# columns: 2
+# name: <cell-element>
+# type: matrix
+# rows: 3
+# columns: 2
+ -0.4715797904996238 -0.475500274931615
+ -0.6641216431238997 -0.1591409172402019
+ -0.3679194806424685 -0.7074974118484789
+
+# name: <cell-element>
+# type: matrix
+# rows: 3
+# columns: 1
+ -0.9909802650770486
+ -0.2868191802377894
+ -0.3459725633085368
+

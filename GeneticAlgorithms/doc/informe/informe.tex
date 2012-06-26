@@ -1,0 +1,322 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{moreverb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{fancybox}
+\usepackage{float}
+\usepackage{fancyvrb}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{multirow}
+
+
+\usepackage{anysize}
+\marginsize{1.5cm}{1.5cm}{1cm}{1cm}
+
+\renewcommand{\shorthandsspanish}{}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}}
+
+\begin{document}
+
+\thispagestyle{empty}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PORTADA %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{titlepage}
+\begin{center}
+
+%Espacio antes del logo del itba
+\Large \  \\[1.5cm]
+
+\includegraphics[scale=0.40]{Images/logo_itba.png}\\[1cm]
+\textsc{\LARGE Sistemas de Inteligencia Artificial}\\[1.5cm]
+\textsc{\Large Trabajo práctico $\text{N}^{\circ}$4}\\[0.5cm]
+
+\HRule \\[0.4cm]
+{ \huge \bfseries Algoritmos Genéticos}\\[0.4cm]
+\HRule \\[1.5cm]
+
+\Large Autores: \\ [0.25cm]
+\begin{tabular}{l @{\ \ -\ \ }l}
+\Large Pablo Ballesty & \Large 49359\\[0.2cm]
+\Large Nicolás Magni & \Large 48008\\[0.2cm]
+\Large Guillermo Liss & \Large 49282 \\[0.2cm]
+\end{tabular}
+
+
+\vspace{1cm}
+
+\vfill
+% La fecha queda abajo.
+{\large \today}
+
+\end{center}
+\end{titlepage}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\abstract{El objetivo del presente documento es detallar las decisiones tomadas durante el diseño e implementación de un algoritmo
+genético, utilizado para hallar la configuración de pesos óptima de una red neuronal dada. Se presentan además, los resultados
+obtenidos para diferentes configuraciones del algoritmo, y se realizan comparaciones de los mismos con los resultados obtenidos
+en el Trabajo Práctico 2, el cual consistía en entrenar la red neuronal mediante \emph{backpropagation}.}
+
+\section{Desarrollo}
+
+En las siguientes secciones se detallan los aspectos que se consideraron destacables durante el desarrollo del trabajo.
+
+\subsection{Población}
+
+Como el algoritmo se aplica a redes neuronales, la población de individuos inicial va a estar conformada por redes neuronales de igual
+estructura, inicializando los pesos de cada una de forma aleatoria.
+
+\subsection{Representación del individuo}
+Como se indicó en la sección anterior, la población va a estar conformada por redes neuronales. Para poder utilizar una red neuronal
+como un individuo, es necesario definir una codificación de la misma, de manera tal que puedan aplicarse a ella los diferentes
+métodos de \emph{crossover} y \emph{mutación}.
+
+\subsubsection{Codificación}
+En el Trabajo Práctico 2, las redes fueron representadas por un conjunto de matrices, donde en cada una se alojaban los pesos
+de las conexiones entre las neuronas de una capa y la subyacente. En este caso, la representación anterior es codificada, alojando todos los pesos
+de las matrices en un único vector. En resumen, el individuo queda representado por un vector de números reales, los cuales corresponden
+a los pesos de la red neuronal codificada, y de esta manera, pueden aplicarse sin problemas los diferentes métodos de \emph{crossover} 
+y \emph{mutación}.\\
+
+Así también, se implementó la decodificación del individuo. Este método consiste en reconstruir el conjunto de matrices original, recorriendo
+el vector de forma consistente a su estructura.
+
+\subsubsection{Fidelidad de la representación del individuo}
+Se analiza a continuación la fidelidad de la representación elegida:
+
+\begin{itemize}
+  \item \textbf{Completitud}: Con la representación elegida, pueden representarse cualquier red neuronal dada, puesto que esto
+  consistirá en colocar todos sus pesos en un vector. De esta forma, se puede afirmar que la representación que se plantea es completa.
+
+  \item \textbf{Coherencia}: La representación planteada resulta coherente, ya que el dominio de los pesos son números reales y la 
+  representación permite que estos tomen cualquier valor dentro de este dominio.
+  
+  \item \textbf{Uniformidad}: Como las redes utilizadas en el algoritmo poseen todas la misma estructura, se puede afirmar
+  que la representación es uniforme, puesto que, si se toman dos representaciones diferentes, estas representan redes
+  con pesos diferentes, es decir, redes diferentes.
+  
+  \item \textbf{Sencillez}: Al ser un formato estandarizado, se puede afirmar que la representación es sencilla ya que existen 
+  implementaciones propias para la codificación y decodificación.
+  
+  \item \textbf{Localidad}: La representación no resulta local, ya que el cambio de uno de los valores de la representación implica un cambio en un solo peso de la red. Esto en la mayoría de los casos hace que la evaluación de la misma cambie notablemente.
+  
+\end{itemize}
+
+
+\subsection{Métodos de selección}
+Se implementaron los siguientes métodos de selección
+
+\begin{itemize}
+       \item Elitismo.
+       \item Ruleta.
+       \item Universal.
+       \item Boltzmann.
+       \item Elitismo + Ruleta
+       \item Elitismo + Boltzmann
+\end{itemize}
+
+Para la selección de Boltzmann se utilizó la siguiente función de temperatura
+
+\begin{equation}
+ T(t) = \frac{T_{\mbox{\emph{inicial}}}}{1 + \log t}
+\end{equation}
+
+donde $T_{\mbox{\emph{inicial}}}$ se fija de forma empírica, y $t$ es el número de generación. De esta forma, se logra una temperatura
+logarítmicamente decreciente, a medida que se avanza en generaciones.
+
+\subsubsection{Selecciones realizadas en el algoritmo}
+
+En el algoritmo se realizan dos selecciones importantes. La primera es la selección de los individuos a reproducir $F$, esta selección
+se realiza sobre el total de la población $P$, y se toma un porcentaje de $P$, el cual se fija mediante la variable de \emph{Gap generacional}. 
+Al conjunto de individuos $F$ se le aplican diferentes operadores genéticos con probabilidades fijadas, y luego se realiza 
+la segunda selección importante, para producir la nueva generación. Esta se realiza sobre $P \bigcup F$, y se toma la misma cantidad de elementos
+que poseía $P$. De esta forma, se crea la nueva generación que transitará el mismo camino descripto.
+
+\subsection{Función de \emph{fitness}}
+
+El objetivo del algoritmo genético es maximizar la función de \emph{fitness} a medida que se avanza en generaciones. Como el objetivo es implementar 
+un algoritmo genético para hallar los pesos óptimos de una red, se propone la siguiente función de fitness:
+
+\begin{equation}
+       f(individuo) = \frac{1}{Err(individuo)}
+\end{equation}
+
+donde la función $Err(individuo)$ es el error cuadrático medio normalizado\footnote{El error cuadrático medio dividido la cantidad de puntos evaluados} 
+que se obtiene de evaluar los puntos recibidos. De esta forma, se plantea una función de fitness que aumenta a medida que el error disminuye.\\
+
+La función de fitness global, se define de la siguiente manera
+\begin{equation}
+      f_{\mbox{\emph{global}}}(P) = \sum_{1}^{n} f(P(i))
+\end{equation}
+siendo $n$ el tamaño de la población.
+
+\subsection{Operadores genéticos}
+Se implementaron los siguientes operadores genéticos
+
+\begin{itemize}
+ \item \textbf{\emph{Crossover}}
+    \begin{itemize}
+     \item Clásico (un sólo punto)
+     \item Múltiple
+     \item Uniforme parametrizado
+     \item Anular
+    \end{itemize}
+ \item \textbf{Mutación}
+    \begin{itemize}
+      \item Clásica
+      \item No uniforme
+    \end{itemize}
+ \item \textbf{\emph{Backpropagation}}
+\end{itemize}
+
+Vale la pena destacar que este último es un operador genético específico para el problema dado. El objetivo del mismo 
+es guiar el avance de las generaciones. El mismo consiste en correr $k$ pasos \emph{feed-forward} sobre el individuo al que se
+aplica el operador. En el problema dado se corre una época del algoritmo de \emph{backpropagation} del Trabajo Práctico 2. Por lo tanto,
+$k = 441$.
+
+\subsection{Condiciones de corte}
+
+Se implementaron cuatro condiciones de corte diferentes:
+
+\begin{itemize}
+       \item Cantidad máxima de generaciones.
+       \item Entorno al óptimo.
+       \item Estructura.
+       \item Contenido.
+\end{itemize}
+
+\section{Resultados}
+
+En todas las pruebas realizadas, se utilizaron:
+
+\begin{itemize}
+ \item Función de activación en las redes neuronales: \emph{tanh}.
+ \item Los 441 puntos recibidos para el Trabajo Práctico 2. Estos se utilizan para el cálculo del \emph{fitness} y el operador 
+ de \emph{backpropagation}.
+\end{itemize}
+
+Se utiliza la siguiente notación:
+
+\begin{itemize}
+ \item $N$: Tamaño de la población.
+ \item $p_m$: Probabilidad de mutación.
+ \item $p_c$: Probabilidad de \emph{crossover}.
+ \item $p_b$: Probabilidad de \emph{backpropagation}.
+ \item $[m \; n \; o]$: corresponde a una red neuronal con una capa de entrada de $m$ neuronas, una capa oculta de $n$ y una capa de salida de $o$.
+ \item $Err_{f_{\mbox{\emph{max}}}}$: corresponde al error cuadrático medio normalizado, del individuo con mayor fitness de la última generación.
+\end{itemize}
+
+
+\subsubsection{Prueba 1}
+
+El objetivo de la siguiente prueba, es descubrir una arquitectura conveniente y una definición adecuada de los parámetros del algoritmo.
+Como existe una gran cantidad de posibles combinaciones de los parámetros del algoritmo, no se sigue un orden de cambio de los mismos, 
+sino que se realizan pruebas diferentes. El objetivo es encontrar una combinación de parámetros que resulte conveniente. No se afirma que la combinación sea la mejor.
+
+Los siguientes resultados corresponden a una red con una estructura [2 4 2 1] utilizando en la selección de individuos a reproducir, y en la
+selección de sustitución, selecciones del tipo elitista. Además, se utiliza \emph{crossover} clásico y mutación clásica, un $p_b = 0.1$.
+Como condición de corte del algoritmo se utilizó una cantidad máxima de generaciones de 200.\\
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+ \hline
+ $N$ & $p_m$ & $p_c$ & $G$ & $f_{\mbox{\emph{global}}}$ & $Err_{f_{\mbox{\emph{max}}}}$ \\
+ \hline
+ 30 & 0.005 & 0.95 & 0.95 & 1394.94 & 7.17\e{-4} \\
+ \hline
+ 30 & 0.01 & 0.6 & 0.75 & 1296.88 & 7.71\e{-4} \\
+ \hline
+ 30 & 0.001 & 0.75 & 0.75 & 1435.42 & 6.97\e{-4} \\
+ \hline
+ 30 & 0.001 & 0.95 & 0.75 & 1558.97 & 6.41\e{-4} \\
+ \hline
+ 50 & 0.005 & 0.95 & 0.8 & 1914.69 & 5.22\e{-4} \\
+ \hline
+ 50 & 0.01 & 0.6 & 0.85 & 1111.08 & 9\e{-4} \\
+ \hline
+ 70 & 0.01 & 0.6 & 0.95 & 1728.77 & 5.78\e{-4} \\
+ \hline
+ 70 & 0.001 & 0.95 & 0.95 & 1769.31 & 5.65\e{-4} \\
+ \hline
+ 70 & 0.005 & 0.95 & 0.75 & 1398.98 & 7.15\e{-4} \\
+ \hline
+ 130 & 0.005 & 0.75 & 0.75 & 2559.19 & 3.91\e{-4} \\
+ \hline
+ 130 & 0.005 & 0.95 & 0.95 & 1949.53 & 5.13\e{-4} \\
+ \hline
+\end{tabular}
+\end{center}
+
+\subsubsection{Prueba 2}
+
+El objetivo de la siguiente prueba, es evaluar el comportamiento del algoritmo con los parámetros que arrojaron mejores
+resultados en la Prueba 1. Pero en este caso, combinando los métodos de selección, mutación y \emph{crossover}.\\
+
+Por lo tanto se utilizarán los siguientes parámetros
+\begin{itemize}
+ \item $N$: 130
+ \item $p_m$: 0.005
+ \item $p_b$: 0.1
+ \item \textit{Crossover}: Clásico
+ \item Mutación: Clásica
+\end{itemize}
+con la misma estructura de antes, es decir, [2 4 2 1].\\
+
+A continuación se presentan los resultados obtenidos.\\
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+ \hline
+ \textbf{Selección} & \textbf{Reemplazo} & $p_c$ & $G$ & $f_{\mbox{\emph{global}}}$ & $Err_{f_{\mbox{\emph{max}}}}$ \\ 
+ \hline
+ Ruleta & Ruleta & 0.75 & 0.75 & 1490.09 & 6.57\e{-4} \\
+ \hline
+ Elite + Ruleta & Elite & 0.75 & 0.75 & 2493.55 & 4.01\e{-4} \\
+ \hline
+ Elite & Ruleta & 0.75 & 0.75 & 1641.21 & 6.09\e{-4} \\
+ \hline
+ Ruleta & Elite & 0.75 & 0.75 & 1688.37 & 5.92\e{-4} \\
+ \hline
+  Elite & Elite + Boltzman & 0.95 & 0.60 & 1005.01 & 1.986\e{-1} \\
+ \hline
+  Universal & Elite + Boltzman & 0.95 & 0.6 & 876,42 & 1.884\e{-1} \\
+ \hline
+   Universal & Universal & 0.95 & 0.65 & 1387,65 & 7.206\e{-4} \\
+ \hline
+   Elite & Universal & 0.95 & 0.75 & 137.864 & 7.2\e{-3} \\
+ \hline
+   Elite & Universal & 0.75 & 0.6 & 150.82 & 6.630\e{-3} \\
+ \hline
+     Elite + Boltzman & Elite & 0.95 & 0.6 & 1636.09 & 6.12\e{-4} \\
+ \hline
+\end{tabular}
+\end{center}
+
+\section{Conclusiones}
+
+Luego de haber realizado el trabajo, y analizando los resultados obtenidos, se sacaron las siguientes conclusiones:
+
+\begin{itemize}
+ \item Utilizando el algoritmo genético para la obtención de pesos para una red, se lograron resultados comparables a los
+ obtenidos en el Trabajo Práctico 2. Recordamos que en este, se había logrado un error de 4.8\e{-4}. Lo destacable, es que
+ los resultados que se obtuvieron, fueron sobre una arquitectura mucho más pequeña.
+ 
+ \item Otra de las ventajas del algoritmo genético, es que como puede verse en las pruebas, se obtuvieron buenos resultados
+ en todas las corridas. A diferencia del entrenamiento de \emph{backpropagation}, que muchas veces se atascaba en un mínimo local.
+ En este caso, si algún individuo cae en un mínimo local, su \emph{fitness} será menor al de los demás, y tendrá menos o nula
+ probabilidad de ser seleccionado para la próxima generación (dependerá de los algoritmos de selección utilizados).
+ 
+\end{itemize} 
+
+\end{document}

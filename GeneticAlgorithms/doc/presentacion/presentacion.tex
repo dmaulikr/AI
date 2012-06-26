@@ -1,0 +1,247 @@
+\documentclass{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{graphicx}
+\usepackage{verbatim}
+\usepackage{moreverb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{fancybox}
+\usepackage{float}
+\usepackage{fancyvrb}
+\usepackage{color}
+\usepackage{hyperref}
+\usepackage{multirow}
+\mode<presentation>
+\usepackage{default}
+
+\usetheme{Madrid}
+\providecommand{\e}[1]{\ensuremath{\times 10^{#1}}}
+
+\author{Grupo 5}
+\title{Algoritmos Genéticos}
+\subtitle{Trabajo Práctico Especial 4}
+\institute[Sistemas de Inteligencia Artificial]{Sistemas de Inteligencia Artificial}
+
+\begin{document}
+
+\maketitle
+
+\begin{frame}{Individiuo}
+\begin{block}{Representación del individuo}
+Vector de $\Re$  conformado por todos los pesos de la red, concatenando las filas de cada una de las matrices que representa las capas.
+\end{block}
+
+\begin{block}{Fidelidad}
+\begin{itemize}
+\item Completitud
+\item Coherencia
+\item Uniformidad
+\item Sencillez
+\item Localidad
+\end{itemize}
+\end{block}
+
+\begin{block}{Población}
+Se representa a la población como un \textit{ceil} de vectores individuos.
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Selección}
+\begin{block}{Se implementaron los siguientes métodos}
+\begin{itemize}
+       \item Elitismo.
+       \item Ruleta.
+       \item Universal.
+       \item Boltzmann.
+       \item Elitismo + Ruleta
+       \item Elitismo + Boltzmann
+\end{itemize}
+\end{block}
+
+\begin{block}{Para Boltzman}
+\begin{equation}
+ T(t) = \frac{T_{\mbox{\emph{inicial}}}}{1 + \log t}
+\end{equation}
+\end{block}
+\end{frame}
+
+\begin{frame}{Fitness}
+\begin{block}{Función de fitness}
+Se busca maximizar la siguiente función de fitness:
+\begin{equation}
+       f(individuo) = \frac{1}{Err(individuo)}
+\end{equation}
+
+donde la función $Err(individuo)$ es el error cuadrático medio normalizado. Fitness aumenta a medida que el error disminuye.
+\end{block}
+
+\begin{block}{Función de fitness global}
+\begin{equation}
+      f_{\mbox{\emph{global}}}(P) = \sum_{1}^{n} f(P(i))
+\end{equation}
+\end{block}
+\end{frame}
+
+\begin{frame}{Operadores genéticos}
+\begin{block}{Crossover}
+    \begin{itemize}
+     \item Clásico (un sólo punto)
+     \item Múltiple
+     \item Uniforme parametrizado
+     \item Anular
+    \end{itemize}
+\end{block}
+
+\begin{block}{Mutación}
+    \begin{itemize}
+      \item Clásica
+      \item No uniforme
+    \end{itemize}
+\end{block}
+
+\begin{block}{Backpropagation}
+Es un operador específico para este problema. Se corren $k$ pasos \textit{feed-forward}, con una época de \textit{backpropagation}, con $k = 441$.
+\end{block}
+\end{frame}
+
+\begin{frame}{Condición de corte}
+\begin{block}{Condiciones de corte implementadas}
+\begin{itemize}
+       \item Cantidad máxima de generaciones.
+       \item Entorno al óptimo.
+       \item Estructura.
+       \item Contenido.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Pruebas}
+\begin{block}{Parámetros}
+\begin{itemize}
+ \item Función de activación en las redes neuronales: \emph{tanh}.
+ \item 441 puntos para el cálculo del \emph{fitness} y del \emph{backpropagation}.
+\end{itemize}
+\end{block}
+
+\begin{block}{Notación}
+\begin{itemize}
+ \item $N$: Tamaño de la población.
+ \item $p_m$: Probabilidad de mutación.
+ \item $p_c$: Probabilidad de \emph{crossover}.
+ \item $p_b$: Probabilidad de \emph{backpropagation}.
+ \item $[m \; n \; o]$: red neuronal con una capa de entrada de $m$ neuronas una capa oculta de $n$ y una capa de salida de $o$.
+ \item $Err_{f_{\mbox{\emph{max}}}}$: error cuadrático medio normalizado del individuo con mayor fitness de la última generación.
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Resultados: Prueba 1}
+\begin{block}{Parámetros}
+\begin{itemize}
+\item Arquitectura: [2 4 2 1]
+\item Selección y reemplazo: elitista
+\item Crossover: clásico
+\item Mutación: clásica
+\item $p_b = 0.1 $
+\item Condición de corte: cantidad máxima de generaciones de 200
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Resultados: Prueba 1}
+\begin{block}{Tabla de resultados}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+ \hline
+ $N$ & $p_m$ & $p_c$ & $G$ & $f_{\mbox{\emph{global}}}$ & $Err_{f_{\mbox{\emph{max}}}}$ \\
+ \hline
+ 30 & 0.005 & 0.95 & 0.95 & 1394.94 & 7.17\e{-4} \\
+ \hline
+ 30 & 0.01 & 0.6 & 0.75 & 1296.88 & 7.71\e{-4} \\
+ \hline
+ 30 & 0.001 & 0.75 & 0.75 & 1435.42 & 6.97\e{-4} \\
+ \hline
+ 30 & 0.001 & 0.95 & 0.75 & 1558.97 & 6.41\e{-4} \\
+ \hline
+ 50 & 0.005 & 0.95 & 0.8 & 1914.69 & 5.22\e{-4} \\
+ \hline
+ 50 & 0.01 & 0.6 & 0.85 & 1111.08 & 9\e{-4} \\
+ \hline
+ 70 & 0.01 & 0.6 & 0.95 & 1728.77 & 5.78\e{-4} \\
+ \hline
+ 70 & 0.001 & 0.95 & 0.95 & 1769.31 & 5.65\e{-4} \\
+ \hline
+ 70 & 0.005 & 0.95 & 0.75 & 1398.98 & 7.15\e{-4} \\
+ \hline
+ 130 & 0.005 & 0.75 & 0.75 & 2559.19 & 3.91\e{-4} \\
+ \hline
+ 130 & 0.005 & 0.95 & 0.95 & 1949.53 & 5.13\e{-4} \\
+ \hline
+\end{tabular}
+\end{center}
+\end{block}
+\end{frame}
+
+\begin{frame}{Resultados: Prueba 2}
+\begin{block}{Parámetros}
+Se combinan distintos operadores de selección, mutación y \emph{crossover}.
+\begin{itemize}
+\item Arquitectura: [2 4 2 1]
+\item Crossover: Clásico
+\item Mutación: Clásica
+ \item $N$: 130
+ \item $p_m$: 0.005
+ \item $p_c$: 0.75
+ \item $p_b$: 0.1
+ \item $G$: 0.75
+\end{itemize}
+\end{block}
+\end{frame}
+
+\begin{frame}{Resultados: Prueba 2}
+\begin{block}{Tabla de resultados}
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+ \hline
+ \textbf{Selección} & \textbf{Reemplazo} & $p_c$ & $G$ & $f_{\mbox{\emph{global}}}$ & $Err_{f_{\mbox{\emph{max}}}}$ \\ 
+ \hline
+ Ruleta & Ruleta & 0.75 & 0.75 & 1490.09 & 6.57\e{-4} \\
+ \hline
+ E + R & Elite & 0.75 & 0.75 & 2493.55 & 4.01\e{-4} \\
+ \hline
+ Elite & Ruleta & 0.75 & 0.75 & 1641.21 & 6.09\e{-4} \\
+ \hline
+ Ruleta & Elite & 0.75 & 0.75 & 1688.37 & 5.92\e{-4} \\
+ \hline
+  Elite & E + B & 0.95 & 0.60 & 1005.01 & 1.986\e{-1} \\
+ \hline
+  Universal & E + B & 0.95 & 0.6 & 876,42 & 1.884\e{-1} \\
+ \hline
+   Universal & Universal & 0.95 & 0.65 & 1387,65 & 7.206\e{-4} \\
+ \hline
+   Elite & Universal & 0.95 & 0.75 & 137.864 & 7.2\e{-3} \\
+ \hline
+   Elite & Universal & 0.75 & 0.6 & 150.82 & 6.630\e{-3} \\
+ \hline
+     E + B & Elite & 0.95 & 0.6 & 1636.09 & 6.12\e{-4} \\
+ \hline
+\end{tabular}
+\end{center}
+
+\end{block}
+\end{frame}
+
+\begin{frame}{Conclusiones}
+\begin{itemize}
+ \item Se lograron resultados comparables a los obtenidos en el Trabajo Práctico 2, donde se había logrado un error de 4.8\e{-4}. Se puede destacar que
+ los resultados se obtuvieron con arquitectura mucho más pequeña.
+ 
+ \item Se obtuvieron buenos resultados en todas las corridas, a diferencia del entrenamiento con \emph{backpropagation} que muchas veces se atascaba en un mínimo local.
+\end{itemize}
+\end{frame}
+
+\end{document}

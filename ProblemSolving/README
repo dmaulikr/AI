@@ -1,0 +1,71 @@
+TRABAJO PRÁCTICO 1 - SISTEMAS DE INTELIGENCIA ARTIFICIAL
+-------------------------------------------------------------------------------
+1. Dependencias:
+
+El trabajo fue desarrollado en Java, es por esto que necesita de un JRE correc-
+tamente instalado.
+
+Para la compilación del trabajo es necesario que el sistema cuente con Maven2, 
+para instalarlo en Ubuntu, correr desde consola:
+
+	sudo apt-get install maven2
+	
+Cualquier problema dirigirse a http://maven.apache.org/
+-------------------------------------------------------------------------------	
+2. Compilación:
+
+Para que el trabajo pueda compilarse y ejecutarse es necesario que los archivos
+run.sh e install.sh cuenten con permisos de ejecución.
+
+Una vez que los archivos tengan permisos de ejecución:
+1. Ejecutar ./install.sh
+
+-------------------------------------------------------------------------------
+3. Tableros:
+
+En el trabajo se incluyen los tableros que se utilizaron en el análisis que se
+presenta en el informe.
+
+Si se quieren resolver tableros aparte, se pueden coloar dentro de la carpeta
+"boards".
+
+Se entiende como tablero a un archivo de texto plano donde se especifican los
+colores con números > 0. No dejar ningún espacio de más en el archivo, de lo
+contrario se lo considerará inválido.
+
+Ejemplo del contenido de un archivo de tablero:
+1,3,2
+1,2,3
+3,1,2
+-------------------------------------------------------------------------------
+3. Ejecución:
+
+Para ejecutar por ejemplo el archivo que se guardó en el paso 2 con el nombre
+de "prueba1.txt" en la carpeta boards:
+
+./run.sh DFS prueba1.txt
+
+Para Gs o AStar:
+./run.sh AStar prueba1.txt H0
+
+Los posibles métodos son:
+- DFS
+- BFS
+- ID
+- GS
+- AStar
+
+Las posibles heurísticas son:
+- H0
+- H1
+- H2
+- H3
+- H4
+
+-------------------------------------------------------------------------------
+
+Cualquier duda o consulta dirigirse por mail a cualquiera de las siguientes
+direcciones:
+nmagni@alu.itba.edu.ar
+gliss@alu.itba.edu.ar
+pballest@alu.itba.edu.ar

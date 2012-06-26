@@ -1,0 +1,23 @@
+\BOOKMARK [1][-]{section.1}{Desarrollo}{}
+\BOOKMARK [2][-]{subsection.1.1}{Evaluaci\363n y condici\363n de corte}{section.1}
+\BOOKMARK [2][-]{subsection.1.2}{Estabilidad de patrones}{section.1}
+\BOOKMARK [2][-]{subsection.1.3}{Estados espurios}{section.1}
+\BOOKMARK [2][-]{subsection.1.4}{Remoci\363n de estados espurios}{section.1}
+\BOOKMARK [2][-]{subsection.1.5}{Cuencas de atracci\363n}{section.1}
+\BOOKMARK [2][-]{subsection.1.6}{Cantidad m\341xima de patrones almacenados}{section.1}
+\BOOKMARK [1][-]{section.2}{Resultados}{}
+\BOOKMARK [2][-]{subsection.2.1}{Prueba 1}{section.2}
+\BOOKMARK [3][-]{subsubsection.2.1.1}{Prueba de estabilidad}{subsection.2.1}
+\BOOKMARK [3][-]{subsubsection.2.1.2}{Prueba de atracci\363n}{subsection.2.1}
+\BOOKMARK [3][-]{subsubsection.2.1.3}{Prueba de patrones inversos}{subsection.2.1}
+\BOOKMARK [3][-]{subsubsection.2.1.4}{Prueba de patrones mezcla}{subsection.2.1}
+\BOOKMARK [3][-]{subsubsection.2.1.5}{Remoci\363n de estados espurios}{subsection.2.1}
+\BOOKMARK [3][-]{subsubsection.2.1.6}{Prueba de energ\355a}{subsection.2.1}
+\BOOKMARK [2][-]{subsection.2.2}{Prueba 2}{section.2}
+\BOOKMARK [1][-]{section.3}{Conclusiones}{}
+\BOOKMARK [2][-]{subsection.3.1}{Memoria direccionable por el contenido}{section.3}
+\BOOKMARK [2][-]{subsection.3.2}{Patrones atractores}{section.3}
+\BOOKMARK [2][-]{subsection.3.3}{Eliminaci\363n de estados espurios}{section.3}
+\BOOKMARK [2][-]{subsection.3.4}{Decrecimiento de la energ\355a}{section.3}
+\BOOKMARK [2][-]{subsection.3.5}{Capacidad de almacenamiento}{section.3}
+\BOOKMARK [1][-]{appendix.A}{Im\341genes}{}
